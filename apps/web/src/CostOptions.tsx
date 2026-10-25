@@ -70,6 +70,9 @@ export function CostOptions() {
 
   const plan = country ? costPlan(result.outcome, country, answers) : null;
   const summary = plan ? costSummary(plan, t) : '';
+  // The floor line sits in the banner above the summary; read aloud, the summary needs it too.
+  const floor = t(`costs_floor_${result.outcome}`);
+  const spoken = summary.includes(floor) ? summary : `${floor} ${summary}`;
   const set = (k: 'moneyForTransport' | 'hasHealthCard', v: TriAnswer) => setAnswers((a) => ({ ...a, [k]: a[k] === v ? null : v }));
   const setEarnings = (text: string) => {
     const clean = text.replace(/[^0-9]/g, '').slice(0, 9);
@@ -100,7 +103,7 @@ export function CostOptions() {
           <div className="card flex items-start gap-3 border-2 border-teal/30">
             <p className="flex-1 text-lg font-semibold leading-snug">{summary}</p>
             {speakable && (
-              <button className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-teal-soft text-xl text-teal" aria-label={t('costs_read_aloud')} onClick={() => speak(lang, 'cost_summary', summary)}>
+              <button className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-teal-soft text-xl text-teal" aria-label={t('costs_read_aloud')} onClick={() => speak(lang, 'cost_summary', spoken)}>
                 🔊
               </button>
             )}
@@ -127,7 +130,6 @@ export function CostOptions() {
           <EmergencyContacts options={plan.emergencyContacts} />
           <section className="space-y-2">
             <h2 className="text-sm font-bold uppercase tracking-wide text-ink-soft">{t('costs_care')}</h2>
-            {plan.outcome === 'GO_NOW' && <p className="font-bold text-now">{t('costs_never_delay')}</p>}
             {plan.showComparison && <p className="text-xs text-ink-soft">{plan.wagesIncluded ? t('costs_wages_note') : t('costs_wages_missing')}</p>}
             <ul className="space-y-2">
               {plan.care.map((e) => (

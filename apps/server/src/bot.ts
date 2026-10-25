@@ -20,17 +20,29 @@ function keyboardFor(c: CaseRecord, field: FollowupField): InlineKeyboard {
   return kb;
 }
 
+const MAX_REASONS = 2;
+const MAX_RETURN_SIGNS = 4;
+
+/** Only the first follow-up of a case explains why the bot is asking; later ones send just the question. */
+export function followupText(lang: Lang, field: FollowupField, first: boolean): string {
+  const question = t(lang, questionKey(field));
+  return first ? `${t(lang, 'voice_followup')}\n${question}` : question;
+}
+
 export function decisionMessage(c: CaseRecord): string {
   const L = c.language;
-  const card = caregiverCard(L, c.decision.outcome, c.symptoms);
-  const lines = [
-    t(L, `decision_${c.decision.outcome}`),
-    '',
-    ...c.decision.reasonKeys.map((k) => `• ${reasonText(L, k)}`),
-  ];
-  if (c.needsHumanReview) lines.push('', t(L, 'needs_review'));
-  lines.push('', card.title, ...card.lines, '', card.returnTitle, ...card.returnSigns.map((s) => `• ${s}`), '', t(L, 'banner'));
-  if (card.draft) lines.push(`(${t(L, 'draft_translation')})`);
+  const outcome = c.decision.outcome;
+  const card = caregiverCard(L, outcome, c.symptoms);
+  const reasonKeys = c.decision.reasonKeys.slice(0, MAX_REASONS);
+  const lines = [t(L, `decision_${outcome}`)];
+  if (reasonKeys.length > 0) lines.push('', ...reasonKeys.map((k) => `• ${reasonText(L, k)}`));
+  // The missing-data reason already asks for review, so never send both.
+  if (c.needsHumanReview && !reasonKeys.includes('missing_critical_data')) lines.push('', t(L, 'needs_review'));
+  // The card title restates the decision line, so it is left out.
+  const homeCare = t(L, 'card_home_care');
+  const cardLines = outcome === 'HOME' ? card.lines : card.lines.filter((l) => l !== homeCare);
+  if (cardLines.length > 0) lines.push('', ...cardLines);
+  lines.push('', card.returnTitle, ...card.returnSigns.slice(0, MAX_RETURN_SIGNS).map((s) => `• ${s}`), '', t(L, 'banner'));
   return lines.join('\n');
 }
 
@@ -41,10 +53,10 @@ export function startBot(token: string, db: DB, extractor: Extractor, emit: (e: 
     emit({ type, case: c });
   };
 
-  const askOrDecide = async (chatId: number, c: CaseRecord) => {
+  const askOrDecide = async (chatId: number, c: CaseRecord, first: boolean) => {
     const field = nextFollowup(c);
     if (field) {
-      await bot.api.sendMessage(chatId, `${t(c.language, 'voice_followup')}\n${t(c.language, questionKey(field))}`, {
+      await bot.api.sendMessage(chatId, followupText(c.language, field, first), {
         reply_markup: keyboardFor(c, field),
       });
     } else {
@@ -92,7 +104,7 @@ export function startBot(token: string, db: DB, extractor: Extractor, emit: (e: 
         await ctx.reply(t(c.language, 'voice_unclear'));
         return;
       }
-      await askOrDecide(ctx.chat.id, c);
+      await askOrDecide(ctx.chat.id, c, true);
     } catch (err) {
       console.error('voice note failed', err);
       await ctx.reply(t(userLang, 'voice_unclear'));
@@ -114,7 +126,7 @@ export function startBot(token: string, db: DB, extractor: Extractor, emit: (e: 
     if (value === undefined) return;
     const next = applyFollowup(c, field, value);
     store(next, 'case_updated');
-    await askOrDecide(ctx.chat.id, next);
+    await askOrDecide(ctx.chat.id, next, false);
   });
 
   bot.catch((err) => console.error('telegram bot error', err.error));
