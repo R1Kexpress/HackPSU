@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { CircleMarker, MapContainer, Popup, TileLayer, Tooltip } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { reasonText } from '@aman/content';
+import { CASE_STATUS_LABELS, fieldLabel, reasonText, t as tr } from '@aman/content';
 import { fastBreathingCutoff } from '@aman/protocol';
 import { CASE_STATUSES, OUTCOME_RANK, type CaseRecord, type CaseStatus, type Clinic as ClinicT } from '@aman/types';
 import { Banner, DecisionBadge, ExperimentalAudio, ReasonList } from './components';
@@ -114,7 +114,7 @@ export function Clinic() {
           <option value="open">Open (not closed)</option>
           {CASE_STATUSES.map((s) => (
             <option key={s} value={s}>
-              {s.replace('_', ' ')}
+              {CASE_STATUS_LABELS[s]}
             </option>
           ))}
         </select>
@@ -131,7 +131,7 @@ export function Clinic() {
                   <span className="rounded-full bg-ink/5 px-2 py-0.5 text-xs font-semibold">{c.source === 'voice_note' ? '🎤 Voice note' : '📱 Field app'}</span>
                   <span className="text-xs uppercase text-ink-soft">{c.language}</span>
                   {c.needsHumanReview && <span className="rounded-full bg-soon-bg px-2 py-0.5 text-xs font-bold text-soon">Needs review</span>}
-                  <span className="ml-auto text-xs text-ink-soft">{c.status.replace('_', ' ')}</span>
+                  <span className="ml-auto text-xs text-ink-soft">{CASE_STATUS_LABELS[c.status]}</span>
                 </div>
                 <div className="text-sm">
                   <b>{c.patient.ageMonths === null ? 'Age unknown' : `${c.patient.ageMonths} mo${c.patient.ageApproximate ? ' (approx.)' : ''}`}</b> · waiting {waited(c.createdAt)}
@@ -156,7 +156,7 @@ export function Clinic() {
                 .filter((c) => c.location)
                 .map((c) => (
                   <CircleMarker key={c.id} center={[c.location!.lat, c.location!.lng]} radius={6} pathOptions={{ color: COLOR[c.decision.outcome], fillColor: COLOR[c.decision.outcome], fillOpacity: 0.85 }} eventHandlers={{ click: () => setSelected(c.id) }}>
-                    <Popup>{c.decision.outcome} · synthetic location</Popup>
+                    <Popup>{tr('en', `decision_${c.decision.outcome}`)} · synthetic location</Popup>
                   </CircleMarker>
                 ))}
             </MapContainer>
@@ -194,7 +194,7 @@ function CaseDetail({ c, clinics, api }: { c: CaseRecord; clinics: ClinicT[]; ap
         <ReasonList keys={c.decision.reasonKeys} lang="en" />
         {c.needsHumanReview && (
           <div className="mt-3">
-            <Banner tone="warn">Needs human review.{c.missingFields.length > 0 && ` Missing: ${c.missingFields.join(', ')}.`}</Banner>
+            <Banner tone="warn">Needs human review.{c.missingFields.length > 0 && ` Missing: ${c.missingFields.map(fieldLabel).join(', ')}.`}</Banner>
           </div>
         )}
       </section>
@@ -216,7 +216,7 @@ function CaseDetail({ c, clinics, api }: { c: CaseRecord; clinics: ClinicT[]; ap
         <Fact label="Breath rate" value={c.breathRatePerMin === null ? 'not counted' : `${c.breathRatePerMin}/min (cutoff ≥ ${cutoff ?? '—'})`} />
         <Fact label="Cough days" value={c.symptoms.coughDays === null ? '—' : String(c.symptoms.coughDays)} />
         {sym.map(([k, v]) => (
-          <Fact key={k} label={k} value={v === null ? 'unknown' : v ? 'yes' : 'no'} tone={v === true ? 'warn' : v === null ? 'muted' : undefined} />
+          <Fact key={k} label={fieldLabel(k)} value={v === null ? 'unknown' : v ? 'yes' : 'no'} tone={v === true ? 'warn' : v === null ? 'muted' : undefined} />
         ))}
       </section>
       {c.audio && <ExperimentalAudio score={c.audio.score} saliency={c.audio.saliency} modelVersion={c.audio.modelVersion} />}
@@ -237,7 +237,7 @@ function CaseDetail({ c, clinics, api }: { c: CaseRecord; clinics: ClinicT[]; ap
       <section className="flex flex-wrap gap-2">
         {CASE_STATUSES.map((s) => (
           <button key={s} disabled={busy || c.status === s} className={`min-h-11 rounded-xl border-2 px-4 font-semibold ${c.status === s ? 'border-teal bg-teal text-paper' : 'border-teal/30 text-teal'}`} onClick={() => act(() => api(`/api/cases/${c.id}`, { method: 'PATCH', body: JSON.stringify({ status: s }) }))}>
-            {s.replace('_', ' ')}
+            {CASE_STATUS_LABELS[s]}
           </button>
         ))}
       </section>

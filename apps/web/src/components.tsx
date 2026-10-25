@@ -104,7 +104,7 @@ export function SaliencyStrip({ values }: { values: number[] }) {
   );
 }
 
-/** Display only. The score does not change the referral decision. */
+/** Display only. The score does not change the referral decision. Pass modelVersion on staff screens only. */
 export function ExperimentalAudio({ score, saliency, spectrogram, modelVersion }: { score: number; saliency?: number[]; spectrogram?: Float64Array[]; modelVersion?: string }) {
   const { t } = useT();
   return (
@@ -126,8 +126,8 @@ export function ExperimentalAudio({ score, saliency, spectrogram, modelVersion }
         </div>
       )}
       <div className="mt-2 flex items-center justify-between text-xs text-ink-soft">
-        <span>{modelVersion}</span>
-        <button className="underline" onClick={() => navigate('/limits')}>
+        {modelVersion && <span>{modelVersion}</span>}
+        <button className="ml-auto underline" onClick={() => navigate('/limits')}>
           {t('limits_link')}
         </button>
       </div>

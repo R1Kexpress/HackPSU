@@ -4,7 +4,7 @@ import { evaluate, fastBreathingCutoff } from '@aman/protocol';
 import type { BooleanSymptomKey, CaseRecord, Symptoms } from '@aman/types';
 import { analyseClip, loadDemoClip, recordClip, type ClipAnalysis } from './audio';
 import { Banner, CaregiverCardView, DecisionBadge, ExperimentalAudio, ReasonList } from './components';
-import { speak, useT } from './i18n';
+import { speak, useCanSpeak, useT } from './i18n';
 import { saveLocal, syncNow } from './store';
 
 type Step =
@@ -235,11 +235,12 @@ function englishSummary(input: { patient: { ageMonths: number | null }; symptoms
 
 function Screen({ title, children, promptKey, promptText }: { title: string; children: React.ReactNode; promptKey?: string; promptText?: string }) {
   const { lang, t } = useT();
+  const speakable = useCanSpeak(lang, promptKey);
   return (
     <section className="flex flex-1 flex-col gap-5">
       <div className="flex items-start justify-between gap-3">
         <h1 className="text-3xl font-extrabold leading-tight">{title}</h1>
-        {promptKey && (
+        {promptKey && speakable && (
           <button
             className="no-print flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-teal-soft text-xl text-teal"
             aria-label={t('play_prompt')}
@@ -460,7 +461,7 @@ function CoughRecorder({ onDone }: { onDone: (c: ClipAnalysis | null) => void })
       {state === 'analysing' && <div className="card text-center text-ink-soft">…</div>}
       {error && <Banner tone="warn">{error}</Banner>}
       {state === 'done' && result?.score !== undefined && (
-        <ExperimentalAudio score={result.score} saliency={result.saliency} spectrogram={result.spectrogram} modelVersion={result.modelVersion} />
+        <ExperimentalAudio score={result.score} saliency={result.saliency} spectrogram={result.spectrogram} />
       )}
       <div className="mt-auto grid gap-3">
         {state === 'done' ? (
@@ -497,7 +498,7 @@ function ResultScreen({ record, clip, saved, onSave, onCard, onNew }: { record: 
     if (spoken.current) return;
     spoken.current = true;
     const text = [t(`decision_${record.decision.outcome}`), ...record.decision.reasonKeys.slice(0, 3).map((k) => t(`reason_${k}`))].join('. ');
-    void speak(lang, `result_${record.decision.outcome.toLowerCase()}`, text);
+    void speak(lang, `result_${record.decision.outcome.toLowerCase()}`, text, { auto: true });
   }, [lang, record.decision.outcome, record.decision.reasonKeys, t]);
 
   return (
@@ -519,10 +520,9 @@ function ResultScreen({ record, clip, saved, onSave, onCard, onNew }: { record: 
             </Banner>
           </div>
         )}
-        <p className="mt-3 text-xs text-ink-soft">Protocol {record.decision.protocolVersion}</p>
       </div>
       <Banner>{t('banner')}</Banner>
-      {clip?.score !== undefined && <ExperimentalAudio score={clip.score} saliency={clip.saliency} spectrogram={clip.spectrogram} modelVersion={clip.modelVersion} />}
+      {clip?.score !== undefined && <ExperimentalAudio score={clip.score} saliency={clip.saliency} spectrogram={clip.spectrogram} />}
       <div className="no-print grid gap-3">
         <button className="btn-primary" onClick={onSave} disabled={saved !== 'no'}>
           {saved === 'no' ? t('save') : saved === 'synced' ? `✓ ${t('synced')}` : `✓ ${t('saved')}`}

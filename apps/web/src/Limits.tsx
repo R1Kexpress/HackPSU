@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
+import { t as tr } from '@aman/content';
 import { protocol } from '@aman/protocol';
+import { DECISIONS } from '@aman/types';
 import { Banner } from './components';
 
 interface Report {
@@ -46,7 +48,7 @@ export function Limits() {
       <div className="card space-y-2">
         <h2 className="text-lg font-bold">How the referral decision is made</h2>
         <p>
-          Only the rule-based protocol decides HOME, REFER_SOON or GO_NOW, using the published child-illness chart cutoffs in <code>protocol.json</code> (version {protocol.version}).
+          Only the rule-based protocol decides between {DECISIONS.map((d) => `“${tr('en', `decision_${d}`)}”`).join(', ')}, using the published child-illness chart cutoffs in <code>protocol.json</code> (version {protocol.version}).
         </p>
         <p>
           Experimental audio score - information only. It does not change the referral decision. {protocol.audio.note}
