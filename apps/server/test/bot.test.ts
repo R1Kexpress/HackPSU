@@ -107,8 +107,9 @@ describe('Telegram cost message', () => {
       const text = costChunks(outcome, country, lang).join('\n\n');
       expect(text).not.toContain(t(lang, 'costs_title'));
       expect(text).not.toContain(t(lang, `decision_${outcome}`));
-      expect(count(text, t(lang, `costs_floor_${outcome}`)), `${outcome} ${country} ${lang}`).toBe(1);
-      expect(count(text, t(lang, 'costs_never_delay'))).toBe(outcome === 'GO_NOW' ? 1 : 0);
+      // GO_NOW says "go now, do not compare prices" once via its floor line; the others open with a bottom line instead.
+      expect(count(text, t(lang, `costs_floor_${outcome}`)), `${outcome} ${country} ${lang}`).toBe(outcome === 'GO_NOW' ? 1 : 0);
+      expect(count(text, t(lang, 'costs_never_delay'))).toBe(0);
     }
   });
 });
