@@ -1,8 +1,10 @@
 import { useEffect, useRef, type ReactNode } from 'react';
 import { caregiverCard, reasonText, t as tr } from '@aman/content';
 import type { CaseRecord, Decision, Lang } from '@aman/types';
-import { navigate } from './router';
 import { useT } from './i18n';
+import { Icon } from './Icon';
+
+const DECISION_ICON = { HOME: 'home', REFER_SOON: 'clock', GO_NOW: 'warning' } as const;
 
 export const DECISION_STYLE: Record<Decision, { fg: string; bg: string; ring: string; icon: string }> = {
   HOME: { fg: 'text-home', bg: 'bg-home-bg', ring: 'border-home', icon: '⌂' },
@@ -125,12 +127,7 @@ export function ExperimentalAudio({ score, saliency, spectrogram, modelVersion }
           <p className="mt-1 text-xs text-ink-soft">{t('saliency_caption')}</p>
         </div>
       )}
-      <div className="mt-2 flex items-center justify-between text-xs text-ink-soft">
-        {modelVersion && <span>{modelVersion}</span>}
-        <button className="ml-auto underline" onClick={() => navigate('/limits')}>
-          {t('limits_link')}
-        </button>
-      </div>
+      {modelVersion && <p className="mt-2 text-xs text-ink-soft">{modelVersion}</p>}
     </section>
   );
 }
@@ -140,37 +137,36 @@ export function CaregiverCardView({ record, clinicName }: { record: CaseRecord; 
   const card = caregiverCard(lang, record.decision.outcome, record.symptoms, clinicName);
   const s = DECISION_STYLE[record.decision.outcome];
   return (
-    <article dir={dir} lang={lang} className={`print-card card border-4 ${s.ring}`}>
+    <article dir={dir} lang={lang} className={`print-card card border-[3px] ${s.ring}`}>
       <header className="flex items-center gap-3">
-        <span aria-hidden className={`flex h-12 w-12 items-center justify-center rounded-full text-2xl font-black ${s.bg} ${s.fg}`}>
-          {s.icon}
+        <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${s.bg} ${s.fg}`}>
+          <Icon name={DECISION_ICON[record.decision.outcome]} />
         </span>
-        <h2 className={`text-2xl font-extrabold ${s.fg}`}>{card.title}</h2>
+        <h2 className={`text-[1.375rem] font-bold leading-tight ${s.fg}`}>{card.title}</h2>
       </header>
-      <ul className="mt-4 space-y-3 text-lg">
+      <ul className="mt-4 space-y-4 text-base leading-relaxed">
         {card.lines.map((l) => (
           <li key={l} className="flex gap-3">
-            <span aria-hidden>{l === t('card_medicine') ? '💊' : l === t('card_go_now_travel') ? '🚑' : '🤱'}</span>
+            <Icon name={l === t('card_medicine') ? 'medicine' : l === t('card_go_now_travel') ? 'clinic' : 'heart'} className="mt-1 h-6 w-6 text-teal" />
             <span>{l}</span>
           </li>
         ))}
       </ul>
-      <h3 className="mt-5 text-lg font-bold">⚠️ {card.returnTitle}</h3>
-      <ul className="mt-2 grid gap-2 text-lg sm:grid-cols-2">
+      <h3 className="mt-5 flex items-start gap-3 text-base font-bold leading-snug"><Icon name="warning" className="h-6 w-6 text-now" />{card.returnTitle}</h3>
+      <ul className="mt-3 grid gap-3 text-base sm:grid-cols-2">
         {card.returnSigns.map((r) => (
           <li key={r} className="rounded-xl bg-now-bg px-3 py-2 text-now">
             {r}
           </li>
         ))}
       </ul>
-      <p className="mt-5 text-lg">
-        <span className="font-bold">📍 {t('card_where')}: </span>
-        {card.where}
-      </p>
+      <div className="mt-5 flex items-start gap-3 text-base leading-snug">
+        <Icon name="location" className="h-6 w-6 text-teal" />
+        <p><span className="font-bold">{t('card_where')}: </span>{card.where}</p>
+      </div>
       <footer className="mt-5 space-y-1 border-t border-ink/10 pt-3 text-xs text-ink-soft">
         <p>{t('banner')}</p>
         {card.draft && <p className="font-semibold text-soon">{t('draft_translation')}</p>}
-        <p>{card.footer}</p>
       </footer>
     </article>
   );

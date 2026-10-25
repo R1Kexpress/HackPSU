@@ -14,6 +14,15 @@ Pneumonia is one of the leading killers of children under five, and most of thos
 
 > **Limits.** Aman is screening support, not a diagnosis. The symptom rules come from the WHO child-illness chart (IMCI / IMNCI) and are cited in `protocol.json`. Only the cough audio model, the patients and the clinics are demo data: the cough model is trained on synthetic tones and never changes the referral, and no real patient data is used. Urdu and Amharic text are drafts awaiting native review. Read [docs/SAFETY.md](docs/SAFETY.md) before demoing.
 
+## Prototype FYI
+
+The web UI omits repeated demo banners and Model limits navigation. The limits page implementation remains in the repository. This presentation change does not make the prototype ready for clinical use:
+
+- Use synthetic practice cases only; do not enter real patient information. Seeded patients, clinics, capacities, and coordinates are invented.
+- The cough model uses synthetic tones, is experimental, and never affects referral decisions. The sample-clip button remains explicitly labeled so a practice clip cannot be mistaken for a patient recording.
+- The shared clinic PIN is demo access control, not production authentication.
+- Urdu and Amharic content still requires native review; translation notices remain visible. Screening guidance, urgent warnings, and human-review notices remain in the app.
+
 ## What decides the referral
 
 - Only the rule-based protocol engine (`packages/protocol`) decides. The thresholds in `packages/protocol/protocol.json` are copied from the published WHO IMCI / IMNCI chart booklet and cited there. The loader refuses to run if any `TODO` is left in.
@@ -64,11 +73,14 @@ pnpm test
 | `GEMINI_API_KEY` | Voice-note extraction. Without it, voice endpoints return 503 and the rest works. |
 | `GEMINI_MODEL` | Defaults to `gemini-3.8-flash`. |
 | `TELEGRAM_BOT_TOKEN` | Starts the long-polling Telegram bot. Without it, the bot is off. |
+| `TELEGRAM_DEMO_COST_COUNTRY` | Demo cost region: `pk_punjab` (default) or `et`. Intake does not collect region; the cost message labels this as a demo region. |
 | `DASHBOARD_PIN` | Shared demo PIN for `/clinic` and `/voice`. Defaults to `demo`. A placeholder, not real authentication. |
 | `DATABASE_PATH` | SQLite file. Relative paths resolve from `apps/server`. |
 | `PORT` | Defaults to 3000. |
 
 Phones need HTTPS for the microphone. Deploy the single Node server (Render, Railway or Fly), or tunnel a laptop with `cloudflared tunnel --url http://localhost:3000` or `ngrok http 3000`.
+
+Telegram is the primary finance demo: one optional “Costs and help” button on non-urgent results opens one planning message. GO_NOW has no finance button. The existing `/costs` web screen is a legacy backup, not a second finance demo to extend. The bot collects no financial answers, omits unverified contacts and coverage promises, and labels unknown figures. Urdu and Amharic additions need native review. Before relying on the live demo, send a synthetic REFER_SOON voice note and open its cost message, then send a GO_NOW note and confirm immediate guidance with no finance prompt. If the bot is unreliable, omit it from the live script and describe its tested limits.
 
 ## API
 

@@ -58,7 +58,7 @@ body {
 }
 
 @utility btn {
-  @apply inline-flex min-h-14 items-center justify-center rounded-2xl px-5 py-3 text-lg font-semibold transition active:scale-[0.98] disabled:opacity-50;
+  @apply inline-flex min-h-13 items-center justify-center rounded-2xl px-5 py-3 text-base font-semibold transition active:scale-[0.98] disabled:opacity-50;
 }
 @utility btn-primary {
   @apply btn bg-teal text-paper shadow-sm hover:brightness-110;
@@ -67,7 +67,45 @@ body {
   @apply btn border-2 border-teal/25 bg-white/60 text-teal hover:bg-white;
 }
 @utility card {
-  @apply rounded-3xl border border-ink/10 bg-white/70 p-5 shadow-[0_1px_0_rgba(0,0,0,0.04)];
+  @apply rounded-[1.25rem] border border-ink/10 bg-white/70 p-5;
+}
+
+button:not(:disabled), summary, select {
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-teal);
+  outline-offset: 3px;
+}
+
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  background: var(--color-teal);
+  color: var(--color-paper);
+}
+
+.splash-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.splash-caption {
+  position: absolute;
+  bottom: max(3.5rem, env(safe-area-inset-bottom));
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.65;
 }
 
 @media print {
