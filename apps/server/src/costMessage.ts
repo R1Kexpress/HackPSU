@@ -23,8 +23,8 @@ export function costMessage(outcome: Decision, country: CostCountry, lang: Lang)
   const goNow = outcome === 'GO_NOW';
   const price = (o: CostOption) => `${formatPrice(o.price, tl('costs_free'))} (${tl('costs_estimate')})`;
   const summary = costSummary(plan, tl);
-  // With nothing to compare, costSummary falls back to the floor line itself.
-  const blocks: string[] = [tl('costs_title'), tl(plan.floorKey), ...(summary === tl(plan.floorKey) ? [] : [summary])];
+  // The button message above already says costs_title. costSummary can already contain the floor line, so send it only once.
+  const blocks: string[] = summary.includes(tl(plan.floorKey)) ? [summary] : [tl(plan.floorKey), summary];
 
   const rec = plan.care.find((e) => e.option.id === plan.recommendedId && e.meetsFloor);
   if (rec) {

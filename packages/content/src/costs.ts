@@ -404,8 +404,9 @@ const fill = (template: string, vars: Record<string, string>) => template.replac
 export function costSummary(plan: CostPlan, t: (key: string) => string): string {
   const comparison = compareSentence(plan, t);
   if (plan.outcome !== 'GO_NOW') return comparison ?? t(plan.floorKey);
+  // The decision and costs_floor_GO_NOW are shown next to the summary, so it does not repeat them.
   const free = plan.transport.find((o) => o.price.kind === 'free');
-  const goNow = free ? fill(t('summary_go_now'), { a: t(free.titleKey) }) : `${t('decision_GO_NOW')}. ${t('costs_floor_GO_NOW')}`;
+  const goNow = free ? fill(t('summary_go_now'), { a: t(free.titleKey) }) : null;
   return [goNow, comparison, t('costs_never_delay')].filter(Boolean).join(' ');
 }
 

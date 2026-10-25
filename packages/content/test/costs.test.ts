@@ -53,7 +53,7 @@ describe('family cost options', () => {
     });
   });
 
-  it('GO_NOW compares hospitals only, and the summary says go now and never delay to compare', () => {
+  it('GO_NOW compares hospitals only, and the summary names the free transport and says never delay to compare', () => {
     everyPlan((outcome, plan) => {
       if (outcome !== 'GO_NOW') return;
       expect(plan.care.every((e) => e.meetsFloor && e.option.level === 'GO_NOW')).toBe(true);
@@ -61,8 +61,12 @@ describe('family cost options', () => {
       expect(plan.cheaperBelowFloorId).toBeNull();
       expect(plan.transport.some((o) => o.price.kind === 'free')).toBe(true);
       const s = costSummary(plan, en);
-      expect(s.startsWith('Go to a hospital now.')).toBe(true);
+      const free = plan.transport.find((o) => o.price.kind === 'free')!;
+      expect(s.startsWith(en('summary_go_now').replace('{a}', en(free.titleKey)))).toBe(true);
       expect(s.endsWith(en('costs_never_delay'))).toBe(true);
+      // The decision and the floor line are shown beside the summary, so it does not repeat them.
+      expect(s).not.toContain(en('decision_GO_NOW'));
+      expect(s).not.toContain(en('costs_floor_GO_NOW'));
     });
   });
 
