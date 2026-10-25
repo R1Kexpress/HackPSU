@@ -69,20 +69,23 @@ describe('ml/metrics.json honesty', () => {
     expect(m.split.recordings.train).toBeGreaterThan(m.split.subjects.train);
   });
 
-  it('leads with the synthetic-tone limit and records tauHigh', () => {
+  it('leads with the synthetic-tone limit and records a research threshold the decision never uses', () => {
     expect(m.limitationsFirst[0]).toMatch(/Synthetic tones/);
     expect(m.limitationsFirst.join(' ')).toMatch(/Not children/);
     expect(m.dataNote).toMatch(/not clinical performance/i);
     expect(m.dataNote).toMatch(/synthetic tones only/i);
-    expect(m.tauHigh).toBeGreaterThan(0);
-    expect(m.tauHigh).toBeLessThanOrEqual(1);
+    expect(m.tauHigh).toBeUndefined();
+    expect(m.experimentalResearchThreshold.value).toBeGreaterThan(0);
+    expect(m.experimentalResearchThreshold.value).toBeLessThanOrEqual(1);
     expect(m.thresholdSelection.chosenOn).toBe('validation subjects');
     expect(m.thresholdSelection.rule).toMatch(/specificity >= 0\.80/);
     expect(m.thresholdSelection.rule).toMatch(/Youden/);
-    expect(m.thresholdSelection.value).toBe(m.tauHigh);
+    expect(m.thresholdSelection.value).toBe(m.experimentalResearchThreshold.value);
     expect(m.usedForReferral).toBe(false);
     expect(m.experimentalResearchThreshold.usedByDecision).toBe(false);
-    expect(m.limitationsFirst.join(' ')).not.toMatch(/raise HOME/);
+    expect(m.limitationsFirst.join(' ')).not.toMatch(/raise HOME|REFER_SOON when/);
+    const web = JSON.parse(readFileSync(repo('apps/web/public/models/metrics.json'), 'utf8'));
+    expect(web).toEqual(m);
     const protocol = JSON.parse(readFileSync(repo('packages/protocol/protocol.json'), 'utf8'));
     expect(protocol.tauHigh).toBeUndefined();
     expect(protocol.audio.escalationEnabled).toBe(false);
