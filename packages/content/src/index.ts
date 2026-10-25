@@ -189,6 +189,11 @@ const en: Dict = {
   summary_only: '{a} is the right level of care for this case. Estimated total: {total}.',
   summary_same: '{a} costs about the same in total as {b}, and is the right level of care for this case.',
   summary_cheaper: '{a} is about {pct}% cheaper in total than {b}, and is the right level of care for this case.',
+  costs_go_fallback: 'If no ambulance can come quickly, take any transport. If another hospital is closer, go there.',
+  costs_bottom_REFER_SOON: 'Go to {a} today or tomorrow. Estimated total {total}, about {hours} away from home.',
+  costs_bottom_HOME: 'No visit is needed now. If a return sign appears, go to {a}. Estimated total {total}, about {hours} away from home.',
+  costs_below_floor_cheaper: 'Cheaper, but it cannot treat this case.',
+  costs_below_floor_cannot: 'It cannot treat this case.',
   summary_below_warning: '{c} costs less, but it is too low a level of care for this case.',
 
   reason_danger_sign_unableToDrinkOrFeed: 'Cannot drink or breastfeed. This is a danger sign.',
@@ -416,6 +421,12 @@ const ur: Dict = {
   summary_only: '{a} اس کیس کے لیے علاج کی درست سطح ہے۔ اندازاً کل خرچ: {total}۔',
   summary_same: '{a} کا کل خرچ {b} جتنا ہی ہے، اور یہ اس کیس کے لیے علاج کی درست سطح ہے۔',
   summary_cheaper: '{a} کل خرچ میں {b} سے تقریباً {pct}% سستا ہے، اور یہ اس کیس کے لیے علاج کی درست سطح ہے۔',
+  // New Telegram cost-message strings: machine-drafted, NEEDS NATIVE REVIEW.
+  costs_go_fallback: 'اگر ایمبولینس جلدی نہ آ سکے تو کوئی بھی سواری لیں۔ اگر کوئی اور ہسپتال زیادہ قریب ہے تو وہاں جائیں۔',
+  costs_bottom_REFER_SOON: 'آج یا کل {a} جائیں۔ اندازاً کل خرچ {total}، گھر سے تقریباً {hours} دور۔',
+  costs_bottom_HOME: 'ابھی جانے کی ضرورت نہیں۔ اگر واپسی کی کوئی علامت ظاہر ہو تو {a} جائیں۔ اندازاً کل خرچ {total}، گھر سے تقریباً {hours} دور۔',
+  costs_below_floor_cheaper: 'سستا ہے، لیکن یہ اس کیس کا علاج نہیں کر سکتا۔',
+  costs_below_floor_cannot: 'یہ اس کیس کا علاج نہیں کر سکتا۔',
   summary_below_warning: '{c} سستا ہے، لیکن اس کیس کے لیے علاج کی سطح بہت کم ہے۔',
 
   reason_danger_sign_unableToDrinkOrFeed: 'بچہ پی یا دودھ نہیں پی سکتا۔ یہ خطرے کی علامت ہے۔',
@@ -639,6 +650,12 @@ const am: Dict = {
   summary_only: '{a} ለዚህ ጉዳይ ትክክለኛው የሕክምና ደረጃ ነው። የተገመተ ጠቅላላ ወጪ፦ {total}።',
   summary_same: '{a} በጠቅላላ ወጪ ከ{b} ጋር ተመሳሳይ ነው፣ እና ለዚህ ጉዳይ ትክክለኛው የሕክምና ደረጃ ነው።',
   summary_cheaper: '{a} በጠቅላላ ወጪ ከ{b} በግምት {pct}% ይረክሳል፣ እና ለዚህ ጉዳይ ትክክለኛው የሕክምና ደረጃ ነው።',
+  // New Telegram cost-message strings: machine-drafted, NEEDS NATIVE REVIEW.
+  costs_go_fallback: 'አምቡላንስ በፍጥነት መምጣት ካልቻለ ማንኛውንም መጓጓዣ ይጠቀሙ። ሌላ ሆስፒታል ቅርብ ከሆነ ወደዚያ ይሂዱ።',
+  costs_bottom_REFER_SOON: 'ዛሬ ወይም ነገ ወደ {a} ይሂዱ። የተገመተ ጠቅላላ ወጪ {total}፣ ከቤት ውጭ የሚያሳልፉት ጊዜ {hours} ያህል።',
+  costs_bottom_HOME: 'አሁን መሄድ አያስፈልግም። የመመለሻ ምልክት ከታየ ወደ {a} ይሂዱ። የተገመተ ጠቅላላ ወጪ {total}፣ ከቤት ውጭ የሚያሳልፉት ጊዜ {hours} ያህል።',
+  costs_below_floor_cheaper: 'ርካሽ ነው፣ ግን ይህንን ጉዳይ ማከም አይችልም።',
+  costs_below_floor_cannot: 'ይህንን ጉዳይ ማከም አይችልም።',
   summary_below_warning: '{c} ያነሰ ያስከፍላል፣ ግን ለዚህ ጉዳይ የሕክምና ደረጃው በጣም ዝቅተኛ ነው።',
 
   reason_danger_sign_unableToDrinkOrFeed: 'መጠጣት ወይም ጡት መጥባት አይችልም። ይህ የአደጋ ምልክት ነው።',
