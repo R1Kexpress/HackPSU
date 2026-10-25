@@ -24,7 +24,7 @@ const en: Dict = {
   choose_language: 'Choose a language',
   consent_title: 'Before you start',
   consent_body:
-    'This tool asks the questions from the child-illness chart and suggests a referral level. It does not diagnose. The health worker decides. Use synthetic practice cases only in this demo.',
+    'This tool asks the questions from the child-illness chart and suggests a referral level. It does not diagnose. The health worker decides.',
   agree: 'I understand',
   start: 'Start',
   next: 'Next',
@@ -251,7 +251,7 @@ const ur: Dict = {
   choose_language: 'زبان منتخب کریں',
   consent_title: 'شروع کرنے سے پہلے',
   consent_body:
-    'یہ ٹول بچوں کی بیماری کے چارٹ کے سوالات پوچھتا ہے اور ریفرل کی سطح تجویز کرتا ہے۔ یہ تشخیص نہیں کرتا۔ فیصلہ ہیلتھ ورکر کرتا ہے۔ اس ڈیمو میں صرف مشق کے مصنوعی کیس استعمال کریں۔',
+    'یہ ٹول بچوں کی بیماری کے چارٹ کے سوالات پوچھتا ہے اور ریفرل کی سطح تجویز کرتا ہے۔ یہ تشخیص نہیں کرتا۔ فیصلہ ہیلتھ ورکر کرتا ہے۔',
   agree: 'میں سمجھ گیا/گئی',
   start: 'شروع کریں',
   next: 'آگے',
@@ -474,7 +474,7 @@ const am: Dict = {
   choose_language: 'ቋንቋ ይምረጡ',
   consent_title: 'ከመጀመርዎ በፊት',
   consent_body:
-    'ይህ መሳሪያ ከሕፃናት ሕመም ቻርት ጥያቄዎችን ይጠይቃል እና የሪፈራል ደረጃ ይጠቁማል። ምርመራ አያደርግም። የሚወስነው የጤና ባለሙያው ነው። በዚህ ማሳያ ውስጥ ሰው ሰራሽ የልምምድ ጉዳዮችን ብቻ ይጠቀሙ።',
+    'ይህ መሳሪያ ከሕፃናት ሕመም ቻርት ጥያቄዎችን ይጠይቃል እና የሪፈራል ደረጃ ይጠቁማል። ምርመራ አያደርግም። የሚወስነው የጤና ባለሙያው ነው።',
   agree: 'ተረድቻለሁ',
   start: 'ጀምር',
   next: 'ቀጣይ',

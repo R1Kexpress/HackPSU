@@ -96,7 +96,7 @@ export function Clinic() {
     return (
       <div className="mx-auto max-w-sm space-y-4 px-4 py-10">
         <h1 className="text-3xl font-extrabold">Clinic dashboard</h1>
-        <p className="text-ink-soft">Enter the shared demo PIN. This is a placeholder, not real authentication.</p>
+        <p className="text-ink-soft">Enter the clinic PIN to view incoming cases.</p>
         <form
           className="space-y-3"
           onSubmit={(e) => {
@@ -114,7 +114,6 @@ export function Clinic() {
 
   return (
     <div className="mx-auto max-w-7xl space-y-5 px-4 py-6 sm:px-6">
-      <Banner tone="warn">Synthetic demo data. Clinics, coordinates and cases are invented. Screening support, not diagnosis.</Banner>
       <div className="flex flex-wrap items-center gap-3">
         <h1 className="mr-auto text-4xl font-bold tracking-tight">Incoming cases</h1>
         <span className={`rounded-full px-3 py-1 text-xs font-bold ${live ? 'bg-home-bg text-home' : 'bg-ink/10 text-ink-soft'}`}>{live ? 'Live' : 'Reconnecting'}</span>

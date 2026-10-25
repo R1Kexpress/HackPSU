@@ -1,7 +1,6 @@
 import { useEffect, useRef, type ReactNode } from 'react';
 import { caregiverCard, reasonText, t as tr } from '@aman/content';
 import type { CaseRecord, Decision, Lang } from '@aman/types';
-import { navigate } from './router';
 import { useT } from './i18n';
 import { Icon } from './Icon';
 
@@ -128,12 +127,7 @@ export function ExperimentalAudio({ score, saliency, spectrogram, modelVersion }
           <p className="mt-1 text-xs text-ink-soft">{t('saliency_caption')}</p>
         </div>
       )}
-      <div className="mt-2 flex items-center justify-between text-xs text-ink-soft">
-        {modelVersion && <span>{modelVersion}</span>}
-        <button className="ml-auto underline" onClick={() => navigate('/limits')}>
-          {t('limits_link')}
-        </button>
-      </div>
+      {modelVersion && <p className="mt-2 text-xs text-ink-soft">{modelVersion}</p>}
     </section>
   );
 }
@@ -173,7 +167,6 @@ export function CaregiverCardView({ record, clinicName }: { record: CaseRecord; 
       <footer className="mt-5 space-y-1 border-t border-ink/10 pt-3 text-xs text-ink-soft">
         <p>{t('banner')}</p>
         {card.draft && <p className="font-semibold text-soon">{t('draft_translation')}</p>}
-        <p>{card.footer}</p>
       </footer>
     </article>
   );

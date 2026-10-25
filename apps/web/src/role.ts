@@ -16,7 +16,6 @@ export interface NavLink {
 export const ROLE_LINKS: Record<Role, NavLink[]> = {
   health_worker: [
     { to: '/', labelKey: 'field_link' },
-    { to: '/limits', labelKey: 'limits_link' },
   ],
   family: [
     { to: '/voice', labelKey: 'voice_link' },
@@ -24,7 +23,6 @@ export const ROLE_LINKS: Record<Role, NavLink[]> = {
   ],
   clinic: [
     { to: '/clinic', labelKey: 'clinic_link' },
-    { to: '/limits', labelKey: 'limits_link' },
   ],
 };
 
