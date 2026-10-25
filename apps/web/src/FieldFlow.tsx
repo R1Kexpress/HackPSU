@@ -6,6 +6,7 @@ import { analyseClip, loadDemoClip, recordClip, type ClipAnalysis } from './audi
 import { Banner, CaregiverCardView, DecisionBadge, ExperimentalAudio, ReasonList } from './components';
 import { speak, useCanSpeak, useT } from './i18n';
 import { saveLocal, syncNow } from './store';
+import { Icon } from './Icon';
 
 type Step =
   | { kind: 'consent' }
@@ -14,7 +15,6 @@ type Step =
   | { kind: 'coughDays' }
   | { kind: 'breath' }
   | { kind: 'cough_rec' }
-  | { kind: 'region' }
   | { kind: 'result' }
   | { kind: 'card' };
 
@@ -32,15 +32,6 @@ const EMPTY: Symptoms = {
   diarrhea: null,
 };
 
-const REGIONS = {
-  punjab: { key: 'region_punjab', center: { lat: 31.35, lng: 74.05 } },
-  highlands: { key: 'region_highlands', center: { lat: 10.2, lng: 39.0 } },
-} as const;
-
-function jitter(c: { lat: number; lng: number }) {
-  return { lat: c.lat + (Math.random() - 0.5) * 0.4, lng: c.lng + (Math.random() - 0.5) * 0.4 };
-}
-
 function buildSteps(symptoms: Symptoms): Step[] {
   const steps: Step[] = [{ kind: 'consent' }, { kind: 'age' }];
   for (const f of QUESTION_ORDER.dangerSigns) steps.push({ kind: 'yesno', field: f });
@@ -48,7 +39,7 @@ function buildSteps(symptoms: Symptoms): Step[] {
     steps.push({ kind: 'yesno', field: f });
     if (f === 'cough' && symptoms.cough === true) steps.push({ kind: 'coughDays' });
   }
-  steps.push({ kind: 'breath' }, { kind: 'cough_rec' }, { kind: 'region' }, { kind: 'result' }, { kind: 'card' });
+  steps.push({ kind: 'breath' }, { kind: 'cough_rec' }, { kind: 'result' }, { kind: 'card' });
   return steps;
 }
 
@@ -59,13 +50,11 @@ export function FieldFlow() {
   const [symptoms, setSymptoms] = useState<Symptoms>(EMPTY);
   const [breathRate, setBreathRate] = useState<number | null>(null);
   const [clip, setClip] = useState<ClipAnalysis | null>(null);
-  const [region, setRegion] = useState<keyof typeof REGIONS>('punjab');
   const [saved, setSaved] = useState<'no' | 'local' | 'synced'>('no');
   const [caseId, setCaseId] = useState(() => crypto.randomUUID());
   const [createdAt, setCreatedAt] = useState(() => new Date().toISOString());
-  const location = useMemo(() => jitter(REGIONS[region].center), [region, caseId]);
   // Any change after saving (e.g. going back to fix an answer) needs a fresh save; the server upserts by id.
-  useEffect(() => setSaved('no'), [ageMonths, symptoms, breathRate, clip, region, lang]);
+  useEffect(() => setSaved('no'), [ageMonths, symptoms, breathRate, clip, lang]);
 
   const steps = useMemo(() => buildSteps(symptoms), [symptoms]);
   const step = steps[Math.min(idx, steps.length - 1)];
@@ -87,7 +76,6 @@ export function FieldFlow() {
     missingFields: decision.missingFields,
     needsHumanReview: decision.needsHumanReview,
     status: 'new',
-    location,
   };
 
   const reset = () => {
@@ -167,19 +155,6 @@ export function FieldFlow() {
 
       {step.kind === 'cough_rec' && <CoughRecorder onDone={(c) => (setClip(c), next())} />}
 
-      {step.kind === 'region' && (
-        <Screen title={t('region')}>
-          <div className="grid gap-3">
-            {(Object.keys(REGIONS) as (keyof typeof REGIONS)[]).map((r) => (
-              <button key={r} className={`btn-quiet ${region === r ? 'border-teal bg-teal-soft' : ''}`} onClick={() => (setRegion(r), next())}>
-                {t(REGIONS[r].key)}
-              </button>
-            ))}
-          </div>
-          <p className="text-sm text-ink-soft">{t('synthetic_banner')}</p>
-        </Screen>
-      )}
-
       {step.kind === 'result' && (
         <ResultScreen
           record={record}
@@ -196,7 +171,7 @@ export function FieldFlow() {
           <CaregiverCardView record={record} />
           <div className="no-print grid grid-cols-2 gap-3">
             <button className="btn-quiet" onClick={() => window.print()}>
-              🖨 {t('print')}
+              <Icon name="printer" className="me-2 h-5 w-5" /> {t('print')}
             </button>
             <button className="btn-primary" onClick={reset}>
               {t('new_case')}

@@ -54,7 +54,7 @@ const en: Dict = {
   q_chestIndrawing: 'Does the lower chest pull in when the child breathes in?',
   q_stridorWhenCalm: 'Is there a harsh noise when the calm child breathes in?',
   q_fever: 'Does the child have a fever or feel hot?',
-  q_diarrhea: 'Does the child have diarrhoea?',
+  q_diarrhea: 'Does the child have diarrhea?',
   days: 'days',
   breath_title: 'Count breaths',
   breath_instructions: 'The child must be calm. Tap once each time the chest rises. Counting runs for the time you pick.',
@@ -203,7 +203,7 @@ const en: Dict = {
   reason_fast_breathing: "Breathing is at or above the chart's fast-breathing cutoff for this age. This needs a clinic visit soon.",
   reason_cough_more_than_14_days: 'Cough for more than 14 days. The chart says to be checked at a clinic.',
   reason_fever_needs_chart_assessment: 'Fever needs checks this form cannot do (such as a malaria test). Visit a clinic soon.',
-  reason_diarrhea_needs_dehydration_check: 'Diarrhoea needs a dehydration check this form cannot do. Visit a clinic soon.',
+  reason_diarrhea_needs_dehydration_check: 'Diarrhea needs a dehydration check this form cannot do. Visit a clinic soon.',
   reason_age_outside_range: 'The chart covers children under 5 years. A clinician should assess this child.',
   reason_no_concerning_signs: 'No signs needing referral were found on this form. Care at home and watch for the return signs.',
   reason_missing_critical_data: 'Some important answers are missing, so this cannot be called safe for home care. Visit a clinic soon.',
@@ -762,7 +762,7 @@ export const FIELD_LABELS: Record<string, string> = {
   vomitsEverything: 'Vomits everything',
   convulsions: 'Convulsions',
   unusuallySleepyOrUnconscious: 'Unusually sleepy or unconscious',
-  diarrhea: 'Diarrhoea',
+  diarrhea: 'Diarrhea',
 };
 
 export function fieldLabel(field: string): string {

@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 
 export const ROLES = ['health_worker', 'family', 'clinic'] as const;
 export type Role = (typeof ROLES)[number];
+export const WEB_ROLES = ['health_worker', 'clinic'] as const;
 
 const ROLE_KEY = 'aman.role';
 const PIN_KEY = 'aman.dashboardPin';
@@ -19,7 +20,6 @@ export const ROLE_LINKS: Record<Role, NavLink[]> = {
   ],
   family: [
     { to: '/voice', labelKey: 'voice_link' },
-    { to: '/costs', labelKey: 'costs_link' },
     { to: '/limits', labelKey: 'limits_link' },
   ],
   clinic: [
@@ -33,12 +33,13 @@ export function roleHome(role: Role): string {
 }
 
 export function roleAllows(role: Role, path: string): boolean {
+  if (role === 'family') return false;
   return ROLE_LINKS[role].some((l) => (l.to === '/' ? path === '/' : path.startsWith(l.to)));
 }
 
 function readRole(): Role | null {
   const v = localStorage.getItem(ROLE_KEY);
-  return (ROLES as readonly string[]).includes(v ?? '') ? (v as Role) : null;
+  return (WEB_ROLES as readonly string[]).includes(v ?? '') ? (v as Role) : null;
 }
 
 export function useRole(): [Role | null, (r: Role | null) => void] {
