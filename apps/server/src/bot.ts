@@ -1,6 +1,7 @@
 import { Bot, InlineKeyboard } from 'grammy';
-import { AGE_BUCKETS, caregiverCard, reasonText, t } from '@aman/content';
+import { AGE_BUCKETS, caregiverCard, defaultCostCountry, reasonText, t } from '@aman/content';
 import { LANGS, type CaseEvent, type CaseRecord, type Lang } from '@aman/types';
+import { COST_CODE_COUNTRY, costCallback, costChunks } from './costMessage';
 import { getCase, saveCase, type DB } from './db';
 import { applyFollowup, buildVoiceCase, nextFollowup, VOICE_FOLLOWUP_FIELDS, type Extractor, type FollowupField } from './voice';
 
@@ -49,7 +50,27 @@ export function startBot(token: string, db: DB, extractor: Extractor, emit: (e: 
     } else {
       // Plain text: translated reasons and card lines are not Markdown-escaped, and a stray _ or * would make Telegram reject the reply.
       await bot.api.sendMessage(chatId, decisionMessage(c));
+      const country = defaultCostCountry(c.language);
+      const code = country === 'pk_punjab' ? 'p' : country === 'et' ? 'e' : 'x';
+      await bot.api.sendMessage(chatId, t(c.language, 'costs_title'), {
+        reply_markup: new InlineKeyboard().text(t(c.language, 'see_costs'), costCallback(c.id, code)),
+      });
     }
+  };
+
+  // The outcome always comes from the stored case, never from the button.
+  const sendCosts = async (chatId: number, id: string, code: string) => {
+    const c = getCase(db, id);
+    if (!c) return;
+    const L = c.language;
+    if (code === 'x') {
+      const kb = new InlineKeyboard().text(t(L, 'country_pk_punjab'), costCallback(c.id, 'p')).text(t(L, 'country_et'), costCallback(c.id, 'e'));
+      await bot.api.sendMessage(chatId, t(L, 'costs_country'), { reply_markup: kb });
+      return;
+    }
+    const country = code === 'p' || code === 'e' ? COST_CODE_COUNTRY[code] : null;
+    if (!country) return;
+    for (const chunk of costChunks(c.decision.outcome, country, L)) await bot.api.sendMessage(chatId, chunk);
   };
 
   bot.command('start', (ctx) =>
@@ -81,6 +102,10 @@ export function startBot(token: string, db: DB, extractor: Extractor, emit: (e: 
   bot.on('callback_query:data', async (ctx) => {
     const [kind, id, idxStr, val] = ctx.callbackQuery.data.split('|');
     await ctx.answerCallbackQuery();
+    if (kind === 'c') {
+      if (ctx.chat) await sendCosts(ctx.chat.id, id, idxStr);
+      return;
+    }
     if (kind !== 'a') return;
     const c = getCase(db, id);
     const field = VOICE_FOLLOWUP_FIELDS[Number(idxStr)];
