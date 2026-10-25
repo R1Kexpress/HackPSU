@@ -21,7 +21,7 @@ import {
 } from '@aman/content';
 import { DECISIONS, type Decision, type Lang } from '@aman/types';
 import { Banner, DecisionBadge } from './components';
-import { speak, useT } from './i18n';
+import { speak, useCanSpeak, useT } from './i18n';
 import { navigate } from './router';
 
 const RESULT_KEY = 'aman.familyResult';
@@ -54,6 +54,7 @@ export function CostOptions() {
   // Kept in component state only: never written to storage or sent anywhere.
   const [answers, setAnswers] = useState<FamilyFinanceAnswers>(NO_FINANCE_ANSWERS);
   const [earningsText, setEarningsText] = useState('');
+  const speakable = useCanSpeak(lang, 'cost_summary');
 
   if (!result) {
     return (
@@ -80,9 +81,7 @@ export function CostOptions() {
     <div dir={dir} lang={lang} className="mx-auto max-w-xl space-y-4 px-4 py-6">
       <h1 className="text-3xl font-extrabold">{t('costs_title')}</h1>
       <DecisionBadge outcome={result.outcome} />
-      <p className="text-xs text-ink-soft">
-        {t('costs_reads_result')} · Protocol {result.protocolVersion}
-      </p>
+      <p className="text-xs text-ink-soft">{t('costs_reads_result')}</p>
       <Banner tone={result.outcome === 'GO_NOW' ? 'warn' : 'teal'}>{t(`costs_floor_${result.outcome}`)}</Banner>
 
       <section className="space-y-2">
@@ -100,9 +99,11 @@ export function CostOptions() {
         <>
           <div className="card flex items-start gap-3 border-2 border-teal/30">
             <p className="flex-1 text-lg font-semibold leading-snug">{summary}</p>
-            <button className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-teal-soft text-xl text-teal" aria-label={t('costs_read_aloud')} onClick={() => speak(lang, 'cost_summary', summary)}>
-              🔊
-            </button>
+            {speakable && (
+              <button className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-teal-soft text-xl text-teal" aria-label={t('costs_read_aloud')} onClick={() => speak(lang, 'cost_summary', summary)}>
+                🔊
+              </button>
+            )}
           </div>
 
           <details className="card space-y-3">

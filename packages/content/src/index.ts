@@ -1,4 +1,4 @@
-import type { Decision, Lang } from '@aman/types';
+import type { CaseStatus, Decision, Lang } from '@aman/types';
 
 /**
  * Pre-written, bundled text. English is the reviewed source. Urdu and Amharic are machine-drafted
@@ -234,6 +234,8 @@ const en: Dict = {
   voice_unclear:
     'We could not understand the voice note clearly. Please contact a health worker. A person will review this case.',
   voice_followup: 'A few answers are missing. Please answer:',
+  voice_error: 'Something went wrong. Please try again or contact a health worker.',
+  voice_error_pin: 'The PIN is not correct. Please check it and try again.',
   age_bucket_lt2m: 'Under 2 months',
   age_bucket_2to12m: '2 to 12 months',
   age_bucket_1to5y: '1 to 5 years',
@@ -455,6 +457,8 @@ const ur: Dict = {
   voice_upload: 'اپ لوڈ کریں',
   voice_unclear: 'ہم وائس نوٹ واضح طور پر نہیں سمجھ سکے۔ براہ کرم ہیلتھ ورکر سے رابطہ کریں۔ ایک شخص اس کیس کو دیکھے گا۔',
   voice_followup: 'کچھ جوابات موجود نہیں۔ براہ کرم جواب دیں:',
+  voice_error: 'کچھ غلط ہو گیا۔ دوبارہ کوشش کریں یا کسی ہیلتھ ورکر سے رابطہ کریں۔',
+  voice_error_pin: 'پن درست نہیں ہے۔ براہ کرم چیک کر کے دوبارہ کوشش کریں۔',
   age_bucket_lt2m: '2 ماہ سے کم',
   age_bucket_2to12m: '2 سے 12 ماہ',
   age_bucket_1to5y: '1 سے 5 سال',
@@ -676,6 +680,8 @@ const am: Dict = {
   voice_upload: 'ጫን እና አስኬድ',
   voice_unclear: 'የድምፅ መልእክቱን በግልጽ መረዳት አልቻልንም። እባክዎ የጤና ባለሙያ ያነጋግሩ። አንድ ሰው ይህን ጉዳይ ይገመግማል።',
   voice_followup: 'አንዳንድ መልሶች ጎድለዋል። እባክዎ ይመልሱ፦',
+  voice_error: 'የሆነ ችግር ተፈጥሯል። እባክዎ እንደገና ይሞክሩ ወይም የጤና ባለሙያን ያነጋግሩ።',
+  voice_error_pin: 'ፒኑ ትክክል አይደለም። እባክዎ አረጋግጠው እንደገና ይሞክሩ።',
   age_bucket_lt2m: 'ከ2 ወር በታች',
   age_bucket_2to12m: 'ከ2 እስከ 12 ወር',
   age_bucket_1to5y: 'ከ1 እስከ 5 ዓመት',
@@ -734,3 +740,31 @@ export const QUESTION_ORDER = {
   dangerSigns: ['unableToDrinkOrFeed', 'vomitsEverything', 'convulsions', 'unusuallySleepyOrUnconscious'],
   symptoms: ['cough', 'difficultyBreathing', 'chestIndrawing', 'stridorWhenCalm', 'fever', 'diarrhea'],
 } as const;
+
+/** Staff labels for the English-only clinic dashboard, so internal values like en_route never reach the screen. */
+export const CASE_STATUS_LABELS: Record<CaseStatus, string> = {
+  new: 'New',
+  en_route: 'On the way',
+  arrived: 'Arrived',
+  closed: 'Closed',
+};
+
+export const FIELD_LABELS: Record<string, string> = {
+  ageMonths: 'Age',
+  breathRatePerMin: 'Breath rate',
+  cough: 'Cough',
+  coughDays: 'Cough days',
+  fever: 'Fever',
+  difficultyBreathing: 'Difficult breathing',
+  chestIndrawing: 'Chest indrawing',
+  stridorWhenCalm: 'Stridor when calm',
+  unableToDrinkOrFeed: 'Unable to drink or feed',
+  vomitsEverything: 'Vomits everything',
+  convulsions: 'Convulsions',
+  unusuallySleepyOrUnconscious: 'Unusually sleepy or unconscious',
+  diarrhea: 'Diarrhoea',
+};
+
+export function fieldLabel(field: string): string {
+  return FIELD_LABELS[field] ?? field;
+}

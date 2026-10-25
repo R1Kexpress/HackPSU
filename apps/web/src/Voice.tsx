@@ -24,12 +24,15 @@ export function Voice() {
     setError(null);
     try {
       const res = await fetch(url, { ...init, headers: { 'x-dashboard-pin': pin, ...(init.headers ?? {}) } });
-      const body = await res.json();
-      if (!res.ok) throw new Error(body.error ?? res.statusText);
-      setResp(body);
+      // Server errors are English developer text; families get a translated message instead.
+      if (!res.ok) {
+        setError(t(res.status === 401 ? 'voice_error_pin' : 'voice_error'));
+        return;
+      }
+      setResp(await res.json());
       sessionStorage.setItem('aman.dashboardPin', pin);
-    } catch (e) {
-      setError((e as Error).message);
+    } catch {
+      setError(t('voice_error'));
     } finally {
       setBusy(false);
     }
